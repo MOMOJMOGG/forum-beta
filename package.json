@@ -21,7 +21,10 @@
   "homepage": "https://github.com/ALPHACamp/forum-express-2021#readme",
   "dependencies": {
     "express": "^4.17.1",
-    "express-handlebars": "^5.3.4"
+    "express-handlebars": "^5.3.4",
+    "mysql2": "^2.3.2",
+    "sequelize": "^6.8.0",
+    "sequelize-cli": "^6.2.0"
   },
   "directories": {
     "test": "tests"
