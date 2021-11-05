@@ -1,4 +1,4 @@
-const { Restaurant } = require('../models')
+const { Restaurant, User } = require('../models')
 const { imgurFileHandler } = require('../helpers/file-helpers') // 將 file-helper 載進來
 
 const adminController = { // 修改這裡
@@ -42,7 +42,7 @@ const adminController = { // 修改這裡
       })
       .catch(err => next(err))
   },
-  editRestaurant: (req, res, next) => { // 新增這段
+  editRestaurant: (req, res, next) => {
     Restaurant.findByPk(req.params.id, {
       raw: true
     })
@@ -63,7 +63,7 @@ const adminController = { // 修改這裡
     ])
       .then(([restaurant, filePath]) => { // 以上兩樣事都做完以後
         if (!restaurant) throw new Error("Restaurant didn't exist!")
-        return restaurant.update({ // 修改這筆資料
+        return restaurant.update({
           name,
           tel,
           address,
@@ -85,6 +85,27 @@ const adminController = { // 修改這裡
         return restaurant.destroy()
       })
       .then(() => res.redirect('/admin/restaurants'))
+      .catch(err => next(err))
+  },
+  getUser: (req, res, next) => {
+    User.findAll({
+      raw: true
+    })
+      .then(users => res.render('admin/users', { users }))
+      .catch(err => next(err))
+  },
+  patchUser: (req, res, next) => {
+    return User.findByPk(req.params.id)
+      .then(user => {
+        if (!user) throw new Error("User didn't exist!")
+        return user.update({
+          isAdmin: !user.isAdmin
+        })
+      })
+      .then(() => {
+        req.flash('success_messages', 'user role was successfully to update')
+        res.redirect('/admin/users')
+      })
       .catch(err => next(err))
   }
 }
