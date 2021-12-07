@@ -14,9 +14,10 @@ router.get('/signin', userController.signInPage)
 router.post('/signin', passport.authenticate('local', { failureRedirect: '/signin', failureFlash: true }), userController.signIn) // 注意是 Post
 router.get('/logout', userController.logout)
 router.get('/restaurants/:id', authenticated, restController.getRestaurant)
-router.get('/restaurants/:id/dashboard', authenticated, restController.getDashboard) // 新增這行
+router.get('/restaurants/:id/dashboard', authenticated, restController.getDashboard)
 router.get('/restaurants', authenticated, restController.getRestaurants)
 router.get('/', (req, res) => res.redirect('/restaurants'))
+router.delete('/comments/:id', authenticatedAdmin, commentController.deleteComment) // 新增這行
 router.post('/comments', authenticated, commentController.postComment)
 router.use('/', generalErrorHandler)
 module.exports = router
