@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs') // 載入 bcrypt
 const db = require('../models')
-const { User } = db
+const { User, Comment, Restaurant } = db
 const { imgurFileHandler } = require('../helpers/file-helpers') // 將 file-helper 載進來
 const userController = {
   signUpPage: (req, res) => {
@@ -40,13 +40,28 @@ const userController = {
     res.redirect('/signin')
   },
   getUser: (req, res, next) => {
-    return User.findByPk(req.params.id, {
-      nest: true,
-      raw: true
-    })
-      .then(user => {
-        res.render('profile', { user })
+    Promise.all([
+      User.findByPk(req.params.id, {
+        raw: true,
+        nest: true
+      }),
+      Comment.findAndCountAll({
+        where: { userId: req.params.id },
+        include: Restaurant,
+        raw: true,
+        nest: true
       })
+    ])
+      .then(([user, comment]) => {
+        console.log(user)
+        console.log(comment)
+        res.render('profile', { user, comment })
+      })
+
+      // .then(user => {
+      //   console.log(user)
+      //   res.render('profile', { user: user.toJSON() })
+      // })
       .catch(err => next(err))
   },
   editUser: (req, res, next) => {
